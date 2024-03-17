@@ -3,6 +3,7 @@ package dev.medalhas.pdfgenerator.file;
 import static dev.medalhas.pdfgenerator.settings.Settings.TOP_MARGIN;
 import static org.apache.pdfbox.pdmodel.common.PDRectangle.A4;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import net.datafaker.Faker;
 
 public class FileGenerator {
 
-	public void randomPdf(String fileName, Options options) throws IOException {
+	public void randomPdf(File file, Options options) throws IOException {
 		Faker faker = new Faker();
 		List<String> paragraphs = faker.lorem().paragraphs(10);
 		
@@ -42,7 +43,7 @@ public class FileGenerator {
 				
 			}
 
-			document.save(fileName);
+			document.save(file);
 		}
 	
 	}

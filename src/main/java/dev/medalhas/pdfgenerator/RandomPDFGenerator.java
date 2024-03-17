@@ -1,8 +1,12 @@
 package dev.medalhas.pdfgenerator;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import dev.medalhas.pdfgenerator.file.FileGenerator;
+import dev.medalhas.pdfgenerator.file.OutputDirectory;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -20,17 +24,27 @@ public class RandomPDFGenerator implements Runnable {
 
 	@Option(names = { "--text" }, description = "Generates with text", negatable = true, defaultValue = "true", fallbackValue = "true")
 	private boolean text = true;
+	
+	@Option(names = {  "-o", "--output" }, description = "Output directory (Default current directory)")
+	private String output = "./";
 
 	@Override
 	public void run() {
 		var options = new Options(barcode, text);
+		OutputDirectory outputDirectory = new OutputDirectory(output);
+		if (!outputDirectory.isValid()) {
+			return;
+		}
+		
 		try {
 			for (int i = 1; i <= number; i++) {
-				FileGenerator fileGenerator = new FileGenerator();
 				String fileName = String.format("random_pdf_%d.pdf", i);
-				fileGenerator.randomPdf(fileName, options);
 
-				System.out.printf("The file %s was generated.", fileName);
+				FileGenerator fileGenerator = new FileGenerator();
+				File outputFile = outputDirectory.getOutputFile(fileName);
+				fileGenerator.randomPdf(outputFile, options);
+
+				System.out.printf("The file %s was generated.", outputFile);
 			}
 		} catch (IOException e) {
 			System.out.println("An unexpected error has ocurred");
