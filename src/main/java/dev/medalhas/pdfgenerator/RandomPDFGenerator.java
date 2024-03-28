@@ -2,8 +2,6 @@ package dev.medalhas.pdfgenerator;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import dev.medalhas.pdfgenerator.file.FileGenerator;
 import dev.medalhas.pdfgenerator.file.OutputDirectory;
@@ -24,13 +22,19 @@ public class RandomPDFGenerator implements Runnable {
 
 	@Option(names = { "--text" }, description = "Generates with text", negatable = true, defaultValue = "true", fallbackValue = "true")
 	private boolean text = true;
-	
+
+	@Option(names = { "--paragraphs" }, description = "Number of paragraphs", defaultValue = "10", fallbackValue = "10")
+	private int paragraphs = 10;
+
+	@Option(names = { "--pages" }, description = "Number of pages", defaultValue = "1", fallbackValue = "1")
+	private int pages = 1;
+
 	@Option(names = {  "-o", "--output" }, description = "Output directory (Default current directory)")
 	private String output = "./";
 
 	@Override
 	public void run() {
-		var options = new Options(barcode, text);
+		var options = new Options(barcode, text, paragraphs, pages);
 		OutputDirectory outputDirectory = new OutputDirectory(output);
 		if (!outputDirectory.isValid()) {
 			return;

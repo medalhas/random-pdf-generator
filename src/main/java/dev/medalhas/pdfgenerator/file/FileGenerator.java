@@ -21,26 +21,29 @@ public class FileGenerator {
 
 	public void randomPdf(File file, Options options) throws IOException {
 		Faker faker = new Faker();
-		List<String> paragraphs = faker.lorem().paragraphs(10);
 		
 		try (PDDocument document = new PDDocument()) {
-			PDPage page = new PDPage(PDRectangle.A4);
-			document.addPage(page);
+			for (int i=0; i<options.getPages();i++) {
+				List<String> paragraphs = faker.lorem().paragraphs(options.getParagraphs());
 
-			try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-				float offsetY = A4.getHeight() - TOP_MARGIN;
-
-				if (options.isText()) {
-					TextProcessor textProcessor = new TextProcessor(paragraphs);
-					textProcessor.process(page, contentStream, offsetY);
-					offsetY = textProcessor.getOffsetY();
+				PDPage page = new PDPage(PDRectangle.A4);
+				document.addPage(page);
+	
+				try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+					float offsetY = A4.getHeight() - TOP_MARGIN;
+	
+					if (options.isText()) {
+						TextProcessor textProcessor = new TextProcessor(paragraphs);
+						textProcessor.process(page, contentStream, offsetY);
+						offsetY = textProcessor.getOffsetY();
+					}
+					
+					if (options.isBarcode()) {
+						BarcodeProcessor barcodeProcessor = new BarcodeProcessor(document);
+						barcodeProcessor.process(page, contentStream, offsetY);
+					}
+					
 				}
-				
-				if (options.isBarcode()) {
-					BarcodeProcessor barcodeProcessor = new BarcodeProcessor(document);
-					barcodeProcessor.process(page, contentStream, offsetY);
-				}
-				
 			}
 
 			document.save(file);
