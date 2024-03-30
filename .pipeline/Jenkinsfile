@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    tools {
+        maven 'Default'
+    }
+    stages {        
+        stage('Build') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+        stage('Tests') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+    }
+}
+
